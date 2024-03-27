@@ -29,8 +29,13 @@ namespace KimeraRPGO {
  */
 class RobustSolver : public GenericSolver {
  public:
+  // GNC types
+  // 类型别名 获取表达式的类型
   using InlierVectorType = decltype(gtsam::GncParams<gtsam::GaussNewtonParams>::knownInliers);
 
+  //
+  // 构造函数声明为explicit，是为了禁止隐式转换
+  // 创建对象时必须有显式的构造函数调用
   explicit RobustSolver(const RobustSolverParams& params);
 
   virtual ~RobustSolver() = default;
