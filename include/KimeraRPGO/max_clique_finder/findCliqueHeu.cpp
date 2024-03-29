@@ -29,11 +29,14 @@ namespace FMC {
 int maxDegree, maxClq;
 
 /* Algorithm 2: MaxCliqueHeu: A heuristic to find maximum clique */
+// 启发式算法，找到最大团
 int maxCliqueHeu(CGraphIO* gio, vector<int>* max_clique_data) {
+  // 获取图的顶点和边 vector<int>* 表示指向vector<int>的指针
   vector<int>* p_v_i_Vertices = gio->GetVerticesPtr();
   vector<int>* p_v_i_Edges = gio->GetEdgesPtr();
   // srand(time(NULL));
 
+  // 获取图的最大入度
   maxDegree = gio->GetMaximumVertexDegree();
   int maxClq = -1, u, icc;
   vector<int> v_i_S;

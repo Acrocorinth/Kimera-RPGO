@@ -26,7 +26,7 @@ int pruned1;
 int pruned2;
 int pruned3;
 int pruned5;
-
+// 递归子程序
 /* Algorithm 2: CLIQUE: Recursive Subroutine of algorithm 1. */
 void maxCliqueHelper(CGraphIO* gio,
                      vector<int>* U,
@@ -83,8 +83,11 @@ int maxClique(CGraphIO* gio, size_t l_bound, vector<int>* max_clique_data) {
   vector<int> U;
   U.reserve(gio->GetVertexCount());
   vector<int> max_clique_data_inter;
+  // 获取顶点数
   max_clique_data_inter.reserve(gio->GetVertexCount());
+  // 获取顶点数
   max_clique_data->reserve(gio->GetVertexCount());
+  // 剪枝算法
   size_t maxClq = l_bound;
   int prev_maxClq;
 

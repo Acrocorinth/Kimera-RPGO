@@ -6,13 +6,15 @@
 
 namespace KimeraRPGO {
 
+// 在邻接矩阵中找到最大团
 int findMaxClique(const Eigen::MatrixXd adjMatrix,
                   std::vector<int>* max_clique) {
   // Compute maximum clique
-  FMC::CGraphIO gio;
-  gio.ReadEigenAdjacencyMatrix(adjMatrix);
-  size_t max_clique_size = 0;
-  max_clique_size = FMC::maxClique(&gio, max_clique_size, max_clique);
+  FMC::CGraphIO gio;                        // 用于读取邻接矩阵
+  gio.ReadEigenAdjacencyMatrix(adjMatrix);  // 读取邻接矩阵
+  size_t max_clique_size = 0;               // 最大团的大小
+  max_clique_size =
+      FMC::maxClique(&gio, max_clique_size, max_clique);  // 找到最大团
   return max_clique_size;
 }
 

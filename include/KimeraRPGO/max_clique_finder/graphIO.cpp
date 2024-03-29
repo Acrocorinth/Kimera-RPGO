@@ -33,6 +33,7 @@ CGraphIO::~CGraphIO() {
 }
 
 bool CGraphIO::readGraph(string s_InputFile, float connStrength) {
+  // 获取文件扩展名
   string fileExtension = getFileExtension(s_InputFile);
   if (fileExtension == "mtx") {
     // matrix market format
@@ -144,7 +145,7 @@ bool CGraphIO::ReadMatrixMarketAdjacencyGraph(string s_InputFile,
       }
 
       if (exists == 1) {
-        num_upper_triangular++;
+        num_upper_triangular++;  //上三角矩阵中的元素个数
       } else {
         if (b_getValue) {
           if (value > connStrength) {
@@ -186,42 +187,50 @@ bool CGraphIO::ReadMatrixMarketAdjacencyGraph(string s_InputFile,
 }
 
 bool CGraphIO::ReadEigenAdjacencyMatrix(Eigen::MatrixXd adjMatrix) {
-  map<int, vector<int>> nodeList;
-  size_t col = 0, row = 0;
+  map<int, vector<int>> nodeList;  // 保存每个节点的邻接节点
+  size_t col = 0, row = 0;         // 行数和列数
 
-  int num_upper_triangular = 0;
+  // 行数和列数相等 均为节点数
+
+  int num_upper_triangular = 0;  // 上三角矩阵中的元素个数
 
   row = adjMatrix.rows();
   col = adjMatrix.cols();
 
-  for (size_t j = 0; j < col; j++) {
-    for (size_t i = j; i < row; i++) {
+  for (size_t j = 0; j < col; j++) {  // 遍历每一列
+    // 遍历完一列后,改列对应的节点的邻接节点已经全部找到,无需再遍历
+    for (size_t i = j; i < row; i++) {  // 遍历每一行
+      // 对角线元素和0元素不处理
       if (i == j || adjMatrix(i, j) == 0) {
         continue;
       }
-
       int exists = 0;
+      // 遍历节点i的邻接节点 nodeList[i]表示获取键值为i的std::vrctor<int>的值
       for (size_t k = 0; k < nodeList[i].size(); k++) {
+        // 遍历节点i的邻接节点,如果节点j已经存在,则不再添加
         if (j == nodeList[i][k]) {
           exists = 1;
           break;
         }
       }
-
+      // 如果邻接节点不存在,则添加到节点i的邻接节点中
       if (exists == 1) {
         num_upper_triangular++;
       } else {
-        nodeList[i].push_back(j);
-        nodeList[j].push_back(i);
+        nodeList[i].push_back(j);  //节点i的邻接节点添加j
+        nodeList[j].push_back(i);  //节点j的邻接节点添加i
       }
     }
   }
 
+  // 0号元素为m_vi_Edges.size()
   m_vi_Vertices.push_back(m_vi_Edges.size());
 
-  for (int i = 0; i < row; i++) {
+  for (int i = 0; i < row; i++) {  // r
+    // 将每个节点的邻接节点添加到边数组中
     m_vi_Edges.insert(m_vi_Edges.end(), nodeList[i].begin(), nodeList[i].end());
-    m_vi_Vertices.push_back(m_vi_Edges.size());
+    m_vi_Vertices.push_back(
+        m_vi_Edges.size());  //每个节点的邻接节点在边数组中的起始位置
   }
 
   nodeList.clear();
@@ -231,15 +240,21 @@ bool CGraphIO::ReadEigenAdjacencyMatrix(Eigen::MatrixXd adjMatrix) {
 
 bool CGraphIO::ReadMeTiSAdjacencyGraph(string s_InputFile) { return true; }
 
+// 计算每个顶点的入度
 void CGraphIO::CalculateVertexDegrees() {
+  // 顶点数
   int i_VertexCount = m_vi_Vertices.size() - 1;
 
+  // 最大度和最小度初始化为-1
   m_i_MaximumVertexDegree = -1;
   m_i_MinimumVertexDegree = -1;
 
+  // 遍历每个顶点
   for (int i = 0; i < i_VertexCount; i++) {
+    // 第i个顶点的度等于下一个顶点的边的起始位置减去当前顶点的边的起始位置
     int i_VertexDegree = m_vi_Vertices[i + 1] - m_vi_Vertices[i];
 
+    // 更新最大度和最小度
     if (m_i_MaximumVertexDegree < i_VertexDegree) {
       m_i_MaximumVertexDegree = i_VertexDegree;
     }
@@ -251,6 +266,7 @@ void CGraphIO::CalculateVertexDegrees() {
     }
   }
 
+  // 计算平均度为边数除以顶点数
   m_d_AverageVertexDegree = (double)m_vi_Edges.size() / i_VertexCount;
 
   return;

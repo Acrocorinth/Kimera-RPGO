@@ -21,6 +21,8 @@
 #include "findClique.h"
 
 namespace FMC {
+
+// 判断文件是否存在
 bool fexists(const char* filename) {
   ifstream ifile(filename);
   return ifile.is_open();
@@ -30,9 +32,11 @@ double wtime()  // returns wall time in seconds
 {
   timeval tv;
   gettimeofday(&tv, NULL);
+  // 类型转换
   return (double)tv.tv_sec + (double)tv.tv_usec / 1000000;
 }
 
+// 打印最大团
 void usage(char* argv0) {
   const char* params =
       "Usage: %s [options...] inputfile\n"
@@ -45,6 +49,7 @@ void usage(char* argv0) {
   exit(-1);
 }
 
+// 获取顶点的度
 int getDegree(vector<int>* ptrVtx, int idx) {
   return ((*ptrVtx)[idx + 1] - (*ptrVtx)[idx]);
 }
